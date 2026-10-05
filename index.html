@@ -1835,8 +1835,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     var sng = document.getElementById("song");
     if(sng){
         try{
-            if(sng.readyState >= 1){ sng.currentTime = 6; }
-            else { sng.addEventListener('loadedmetadata', function(){ try{ sng.currentTime = 6; }catch(e){} }, {once: true}); }
+            if(sng.readyState >= 1){ sng.currentTime = 5; }
+            else { sng.addEventListener('loadedmetadata', function(){ try{ sng.currentTime = 5; }catch(e){} }, {once: true}); }
         }catch(e){}
     }
 })
@@ -1910,7 +1910,7 @@ function enableScroll() {
 function _playAudio(){
     if(!ytMusicPlaying) {
         if(document.body.contains(document.getElementById("song"))) {
-        var _sng=document.getElementById("song");try{if(_sng.currentTime<6){_sng.currentTime=6;}}catch(e){}_sng.play();
+        var _sng=document.getElementById("song");try{if(_sng.currentTime<5){_sng.currentTime=5;}}catch(e){}_sng.play();
         isYT = false;
       } else {
         isYT = true;
