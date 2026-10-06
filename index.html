@@ -244,9 +244,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       }
       video.addEventListener('canplay', function(){ tryPlay(video); });
       video.addEventListener('loadeddata', function(){ tryPlay(video); });
-      // Saat tombol "Buka Undangan" diklik, cover hilang -> langsung play
+      // Saat tombol "Buka Undangan" diklik, cover hilang -> langsung play & jadwalkan teks hero
       document.addEventListener('click', function(e){
         if(e.target && e.target.closest && e.target.closest('#tombolbuka')) {
+          if(window.startHeroDelayedCountdown) window.startHeroDelayedCountdown();
           setTimeout(playSemua, 400);
           setTimeout(playSemua, 1600);
         }
@@ -267,6 +268,24 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 })();
 </script>
 
+<style>
+/* Tunda teks hero (The Wedding of Vicky & Ricka, Selasa 13 Oktober 2026, tombol scroll)
+   agar baru muncul pada detik ke-7 setelah klik Buka Undangan */
+.hero-delayed-text:not(.hero-text-shown),
+.hero-delayed-pending {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.hero-delayed-text {
+  transition: opacity 0.8s ease-in-out;
+}
+.hero-delayed-text.hero-text-shown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+</style>
 
 <meta name="facebook-domain-verification" content="uxp988xpr4nwzk9m61hifpm3likshf">
 <!-- Meta Pixel Code -->
@@ -1858,7 +1877,47 @@ function showAllSect(){
       elSect.style.display = "";
     }
 }
+// Logic untuk memunculkan teks hero (The Wedding of Vicky & Ricka, Selasa 13 Oktober 2026, tombol scroll)
+// pada detik ke-7 setelah tombol buka undangan diklik
+var heroDelayedDone = false;
+function triggerHeroDelayedText(){
+  if(heroDelayedDone) return;
+  heroDelayedDone = true;
+  var delayedItems = document.querySelectorAll('.hero-delayed-text');
+  delayedItems.forEach(function(el){
+    el.classList.add('hero-text-shown');
+  });
+
+  var widgets = [
+    { sel: '.elementor-element-24cf8f29', anim: 'zoomIn', delay: 0 },
+    { sel: '.elementor-element-14e621b0', anim: 'zoomIn', delay: 180 },
+    { sel: '.elementor-element-438f3e7e', anim: 'zoomIn', delay: 320 },
+    { sel: '.elementor-element-70bb115a', anim: 'zoomIn', delay: 460 },
+    { sel: '.elementor-element-6fa4c953', anim: 'fadeInDown', delay: 600 }
+  ];
+
+  widgets.forEach(function(item){
+    setTimeout(function(){
+      var el = document.querySelector(item.sel);
+      if(!el) return;
+      el.classList.remove('hero-delayed-pending');
+      el.classList.remove('elementor-invisible');
+      el.classList.remove(item.anim);
+      void el.offsetWidth;
+      el.classList.add('animated', item.anim);
+    }, item.delay);
+  });
+}
+
+var heroDelayedTimer = null;
+function startHeroDelayedCountdown(){
+  if(heroDelayedTimer) return;
+  heroDelayedTimer = setTimeout(triggerHeroDelayedText, 7000);
+}
+window.startHeroDelayedCountdown = startHeroDelayedCountdown;
+
 document.getElementById("tombolbuka").onclick=function(){
+  startHeroDelayedCountdown();
   enableScroll();
   _playAudio();
   jQuery("#cover").animate({ opacity: 0, top: "-100%"}, 1500);
@@ -1967,27 +2026,27 @@ function _pauseAudio(){
 		</div>
 						</div>
 				</div>
-				<div class="elementor-element elementor-element-24cf8f29 elementor-invisible elementor-widget elementor-widget-heading" data-id="24cf8f29" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:100}" data-widget_type="heading.default">
+				<div class="elementor-element elementor-element-24cf8f29 hero-delayed-text hero-delayed-pending elementor-invisible elementor-widget elementor-widget-heading" data-id="24cf8f29" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:100}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
 					<h1 class="elementor-heading-title elementor-size-default">The Wedding of</h1>				</div>
 				</div>
-		<div class="elementor-element elementor-element-3bb66a5d jedv-enabled--yes e-flex e-con-boxed e-con e-child" data-id="3bb66a5d" data-element_type="container" data-e-type="container" data-settings="{&quot;jet_parallax_layout_list&quot;:[]}">
+		<div class="elementor-element elementor-element-3bb66a5d hero-delayed-text jedv-enabled--yes e-flex e-con-boxed e-con e-child" data-id="3bb66a5d" data-element_type="container" data-e-type="container" data-settings="{&quot;jet_parallax_layout_list&quot;:[]}">
 					<div class="e-con-inner">
-				<div class="elementor-element elementor-element-14e621b0 animated-slow elementor-invisible elementor-widget elementor-widget-heading" data-id="14e621b0" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:200}" data-widget_type="heading.default">
+				<div class="elementor-element elementor-element-14e621b0 hero-delayed-pending animated-slow elementor-invisible elementor-widget elementor-widget-heading" data-id="14e621b0" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:200}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
 					<h1 class="elementor-heading-title elementor-size-default">Vicky &amp;</h1>				</div>
 				</div>
-				<div class="elementor-element elementor-element-438f3e7e animated-slow elementor-invisible elementor-widget elementor-widget-heading" data-id="438f3e7e" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="heading.default">
+				<div class="elementor-element elementor-element-438f3e7e hero-delayed-pending animated-slow elementor-invisible elementor-widget elementor-widget-heading" data-id="438f3e7e" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:300}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
 					<h1 class="elementor-heading-title elementor-size-default">Ricka</h1>				</div>
 				</div>
 					</div>
 				</div>
-				<div class="elementor-element elementor-element-70bb115a elementor-invisible elementor-widget elementor-widget-heading" data-id="70bb115a" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}" data-widget_type="heading.default">
+				<div class="elementor-element elementor-element-70bb115a hero-delayed-text hero-delayed-pending elementor-invisible elementor-widget elementor-widget-heading" data-id="70bb115a" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation&quot;:&quot;zoomIn&quot;,&quot;_animation_delay&quot;:400}" data-widget_type="heading.default">
 				<div class="elementor-widget-container">
 					<h1 class="elementor-heading-title elementor-size-default">Selasa, 13 Oktober 2026</h1>				</div>
 				</div>
-				<div class="elementor-element elementor-element-6fa4c953 elementor-align-center elementor-mobile-align-center elementor-invisible elementor-widget elementor-widget-button" data-id="6fa4c953" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;fadeInDown&quot;,&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:500}" data-widget_type="button.default">
+				<div class="elementor-element elementor-element-6fa4c953 hero-delayed-text hero-delayed-pending elementor-align-center elementor-mobile-align-center elementor-invisible elementor-widget elementor-widget-button" data-id="6fa4c953" data-element_type="widget" data-e-type="widget" data-settings="{&quot;_animation_mobile&quot;:&quot;fadeInDown&quot;,&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:500}" data-widget_type="button.default">
 				<div class="elementor-widget-container">
 									<div class="elementor-button-wrapper">
 					<a class="elementor-button elementor-button-link elementor-size-sm" href="#sc">
