@@ -285,6 +285,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   visibility: visible;
   pointer-events: auto;
 }
+
+/* Pastikan form Best Wishes & daftar ucapan selalu muncul */
+#saic-wrap-comment-5872,
+.saic-wrap-comments,
+#daftar-ucapan {
+  display: block !important;
+}
 </style>
 
 <meta name="facebook-domain-verification" content="uxp988xpr4nwzk9m61hifpm3likshf">
@@ -2441,7 +2448,7 @@ function _pauseAudio(){
 
 	</div>
 
-	<div id="saic-wrap-comment-5872" class="saic-wrap-comments" style="display: none;" data-id="5872">
+	<div id="saic-wrap-comment-5872" class="saic-wrap-comments" style="display: block !important;" data-id="5872">
 
 		<div id="saic-wrap-form-5872" class="saic-wrap-form saic-clearfix">
 
@@ -2491,10 +2498,6 @@ function _pauseAudio(){
 								<input type="hidden" name="commentpress" value="true">
 								<input type="submit" id="submit-5872" value="Kirim">
 							</p>
-						<div class="saic-wrap-ucapan-kirimdigi" style="margin-top:12px;text-align:center;">
-							<button type="button" id="btn-ucapan-toggle" style="background:#3D7DBC;color:#ffffff;border:none;border-radius:6px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;">Tampilkan Ucapan</button>
-							<div id="daftar-ucapan" style="display:none;margin-top:12px;text-align:left;"></div>
-						</div>
 						</div>
 
 					</form>
@@ -2507,7 +2510,7 @@ function _pauseAudio(){
 
 		<div id="saic-comment-status-5872" class="saic-comment-status"></div>
 
-		<ul id="saic-container-comment-5872" class="saic-container-comments saic-order-DESC saic-has-1-comments" data-order="DESC"></ul>
+		<div id="daftar-ucapan" style="display:block;margin-top:20px;text-align:left;"></div>
 
 		<div class="saic-holder-5872 saic-holder"></div>
 
@@ -3042,9 +3045,7 @@ var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx_B64Rg4aYv0z4YSxTYet0d
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function labelHadir(k){if(k==="present")return "Hadir";if(k==="notpresent")return "Tidak Hadir";if(k==="notsure")return "Masih Ragu";return esc(k);}
 var box=document.getElementById("daftar-ucapan");
-var toggle=document.getElementById("btn-ucapan-toggle");
 var linkUcapan=document.getElementById("saic-link-5872");
-var terbuka=false,sudahMuat=false;
 
 function updateUcapanCount(count){
   var cEl=document.getElementById("saic-count-total")||(linkUcapan?linkUcapan.querySelector("span"):null);
@@ -3054,7 +3055,7 @@ function updateUcapanCount(count){
 function renderUcapan(list){
   if(!list||!list.length){
     updateUcapanCount(0);
-    if(box) box.innerHTML="<p>Tidak ada ucapan.</p>";
+    if(box) box.innerHTML="<p style='text-align:center;color:#666;'>Belum ada ucapan.</p>";
     return;
   }
   updateUcapanCount(list.length);
@@ -3068,33 +3069,25 @@ function renderUcapan(list){
 }
 
 function muatUcapan(silent){
-  if(!silent && box) box.innerHTML="<p>Memuat ucapan...</p>";
+  if(!silent && box) box.innerHTML="<p style='text-align:center;color:#666;'>Memuat ucapan...</p>";
   fetch(SCRIPT_URL+"?action=list").then(function(r){return r.json();}).then(function(d){
-    sudahMuat=true;
     renderUcapan(d);
   }).catch(function(){
-    if(!silent && box) box.innerHTML="<p>Gagal memuat ucapan.</p>";
+    if(!silent && box) box.innerHTML="<p style='text-align:center;color:#e11d48;'>Gagal memuat ucapan.</p>";
   });
 }
 
-// Muat data otomatis di latar belakang agar counter selalu sinkron dengan ucapan asli
-if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", function(){ muatUcapan(true); });
-else muatUcapan(true);
-
-if(toggle){
-  toggle.addEventListener("click",function(){
-    terbuka=!terbuka;
-    box.style.display=terbuka?"block":"none";
-    toggle.textContent=terbuka?"Sembunyikan Ucapan":"Tampilkan Ucapan";
-    if(terbuka&&!sudahMuat) muatUcapan(false);
-  });
-}
+// Langsung muat ucapan saat halaman dibuka agar selalu tampil
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", function(){ muatUcapan(false); });
+else muatUcapan(false);
 
 if(linkUcapan){
   linkUcapan.addEventListener("click",function(e){
     e.preventDefault();
-    if(toggle) toggle.click();
-  });
+    e.stopPropagation();
+    var formEl=document.getElementById("respond-5872");
+    if(formEl) formEl.scrollIntoView({behavior:"smooth"});
+  }, true);
 }
 
 var form=document.getElementById("commentform-5872");
@@ -3114,9 +3107,7 @@ if(form){form.addEventListener("submit",function(e){
     if(res&&res.status==="ok"){
       info('<p class="saic-ajax-success">Terima kasih atas ucapan Anda!</p>');
       form.reset();
-      sudahMuat=false;
       muatUcapan(false);
-      if(!terbuka&&toggle) toggle.click();
     }
     else{info('<p class="saic-ajax-error">Gagal mengirim, coba lagi.</p>');}
   }).catch(function(){if(btn)btn.disabled=false;info('<p class="saic-ajax-error">Gagal mengirim, periksa koneksi lalu coba lagi.</p>');});
